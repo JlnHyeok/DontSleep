@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Progress from '$lib/components/Progress.svelte';
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import * as tmImage from '@teachablemachine/image';
 	import { onMount } from 'svelte';
 
@@ -112,9 +114,9 @@
 </script>
 
 <!-- svelte-ignore a11y-media-has-caption -->
-<div class="z-10 w-[400px] h-2/3">
+<div class="z-10 w-[400px] xs:h-3/4 h-full relative">
 	<!-- TITLE -->
-	<div class="w-full flex justify-center mb-10">
+	<div class="w-full flex justify-center mt-14 mb-2">
 		<span class="font-extrabold text-[36px]"> 나만의 온라인 스터디룸 </span>
 	</div>
 
@@ -158,7 +160,7 @@
 		{/if}
 	</div>
 
-	<div class="m-auto w-[300px] h-14 flex justify-center items-center bg-red-200">
+	<div class="m-auto w-[300px] h-14 flex justify-center items-center">
 		시간 설정 공간
 		<input type="number" required bind:value={inputValue} step={10} min={0} max={60} />
 	</div>
@@ -173,13 +175,16 @@
 
 	{#if isPlay}
 		<!-- content here -->
-		<div class="w-full justify-center animate-pulse flex mt-5">
+		<div class="w-full mt-5">
+			<ProgressBar />
+		</div>
+		<!-- <div class="w-full justify-center animate-pulse flex mt-5">
 			<span
 				class="font-extrabold text-3xl
-			 {status == '감시하는 중' ? 'text-green-600' : 'text-red-600'}"
+				{status == '감시하는 중' ? 'text-green-600' : 'text-red-600'}"
 				>{status == '감시하는 중' ? '오늘도 화이팅!' : '졸면 안돼요!!!'}</span
 			>
-		</div>
+		</div> -->
 	{/if}
 </div>
 
