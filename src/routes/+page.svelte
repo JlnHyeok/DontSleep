@@ -169,13 +169,13 @@
 		<button
 			type="button"
 			class="border-black text-xl font-bold border-2 w-[300px] h-10 rounded-lg bg-blue-300 hover:scale-[1.02] duration-100"
-			on:click={!isPlay ? init : stop}>{!isPlay ? 'Start' : 'Stop'}</button
+			on:click={!isPlay ? init : stop}>{!isPlay ? '공부 시작' : '정지'}</button
 		>
 	</div>
 
 	{#if isPlay}
 		<!-- content here -->
-		<div class="w-full mt-5">
+		<div class="w-full mt-10">
 			<ProgressBar />
 		</div>
 		<!-- <div class="w-full justify-center animate-pulse flex mt-5">

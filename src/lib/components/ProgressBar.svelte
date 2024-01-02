@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import RunGirl from './avatar/RunGirl.svelte';
+	import RunCat from './avatar/RunCat.svelte';
 
 	onMount(() => {
 		var elm = document.querySelector('#progress');
@@ -16,7 +18,7 @@
 <div id="container" class="w-[300px] m-auto">
 	<label for="water">
 		<div id="run" class="absolute -top-2 w-2 h-2">
-			<div id="girl" class="-ml-[128px] -mt-[128px]"></div>
+			<RunCat />
 		</div>
 		<div id="fill"></div>
 	</label>
