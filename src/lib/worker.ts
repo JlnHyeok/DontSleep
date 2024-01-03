@@ -3,7 +3,7 @@ let time = 3 * 1000;
 
 self.onmessage = (e) => {
 	if (e.data.time) time = e.data.time * 1000;
-	if (e.data.msg == 'start') {
+	if (e.data.status == 'sleep') {
 		if (!timer) {
 			timer = setTimeout(() => {
 				postMessage({ status: 'sleep' });

@@ -1,7 +1,11 @@
-let snd = new Audio('/alarm/alarm1.mp3');
+import { browser } from '$app/environment';
 
-export function beep() {
-	if (status == '졸음 감지!') {
+let snd: HTMLAudioElement;
+if (browser) {
+	snd = new Audio('/alarm/alarm_ring_1.mp3');
+}
+export function beep(status: string) {
+	if (status == 'sleep') {
 		snd.play();
 	} else {
 		snd.pause();

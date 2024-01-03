@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import '../app.css';
-
-	let isPip: boolean = false;
+	import { isPip } from '$lib/store';
 
 	onMount(() => {
 		document.addEventListener('enterpictureinpicture', () => {
-			isPip = true;
+			$isPip = true;
 		});
 		document.addEventListener('leavepictureinpicture', () => {
-			isPip = false;
+			$isPip = false;
 		});
 	});
 </script>
