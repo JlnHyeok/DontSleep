@@ -1,17 +1,15 @@
 <script lang="ts">
 	import Progress from '$lib/components/Progress.svelte';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import { worker } from '$lib/store';
 	import * as tmImage from '@teachablemachine/image';
 	import { onMount } from 'svelte';
 
-	let worker: Worker | undefined = undefined;
+	let model: tmImage.CustomMobileNet, webcam: tmImage.Webcam, maxPredictions: number;
+
 	let status: string = '대기';
 	let isPlay: boolean = false;
 	const URL = `/model/`;
-	let model: tmImage.CustomMobileNet,
-		webcam: tmImage.Webcam,
-		labelContainer: HTMLElement | null,
-		maxPredictions: number;
 
 	let snd: HTMLAudioElement;
 	let isLoading: boolean = false;
@@ -21,8 +19,8 @@
 	const metadataURL = URL + 'metadata.json';
 
 	onMount(async () => {
-		snd = new Audio('/alarm/alarm1.mp3');
-		loadWorker();
+		snd = new Audio('/alarm/alarm_ring_1.mp3');
+		await loadWorker();
 		model = await tmImage.load(modelURL, metadataURL);
 		maxPredictions = model.getTotalClasses();
 		document.addEventListener('enterpictureinpicture', () => {
@@ -47,7 +45,7 @@
 			video.play();
 			window.requestAnimationFrame(loop);
 			document.getElementById('webcam')?.appendChild(webcam.canvas);
-			worker?.postMessage({ time: inputValue });
+			$worker?.postMessage({ time: inputValue });
 		}
 	}
 
@@ -80,7 +78,7 @@
 	}
 
 	function beep() {
-		if (status == '졸음 감지!') {
+		if (status == 'sleep') {
 			snd.play();
 		} else {
 			snd.pause();
@@ -95,19 +93,18 @@
 			const prediction = await model.predict(webcam.canvas);
 			for (let i = 0; i < maxPredictions; i++) {
 				if (i == 0 && Number(prediction[0].probability.toFixed(2)) >= 0.6) {
-					worker?.postMessage({ msg: 'start' });
+					$worker?.postMessage({ msg: 'start' });
 				} else if (i == 0 && Number(prediction[0].probability.toFixed(2)) < 0.6) {
-					worker?.postMessage({ msg: 'end' });
+					$worker?.postMessage({ msg: 'end' });
 				}
 			}
 		}
 	}
 
 	const loadWorker = async () => {
-		const Worker = await import('./worker?worker');
-		worker = new Worker.default();
-		worker.postMessage('ss');
-		worker.onmessage = (e) => {
+		const Worker = await import('$lib/worker?worker');
+		$worker = new Worker.default();
+		$worker.onmessage = (e) => {
 			status = e.data.status;
 		};
 	};

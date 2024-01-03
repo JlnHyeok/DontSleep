@@ -1,5 +1,17 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import '../app.css';
+
+	let isPip: boolean = false;
+
+	onMount(() => {
+		document.addEventListener('enterpictureinpicture', () => {
+			isPip = true;
+		});
+		document.addEventListener('leavepictureinpicture', () => {
+			isPip = false;
+		});
+	});
 </script>
 
 <div
