@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import RunGirl from './avatar/RunGirl.svelte';
 	import RunCat from './avatar/RunCat.svelte';
+	import RunRabbit from './avatar/RunRabbit.svelte';
 
 	onMount(() => {
 		var elm = document.querySelector('#progress');
@@ -18,7 +19,7 @@
 <div id="container" class="w-[300px] m-auto">
 	<label for="water">
 		<div id="run" class="absolute -top-2 w-2 h-2">
-			<RunCat />
+			<RunRabbit />
 		</div>
 		<div id="fill"></div>
 	</label>
@@ -70,6 +71,7 @@
 	label #run {
 		animation: run 200s linear forwards;
 	}
+
 	label #fill:before {
 		content: '';
 		display: block;
@@ -93,22 +95,5 @@
 	}
 	span:last-child {
 		float: right;
-	}
-	#girl {
-		scale: 0.1;
-		position: absolute;
-		height: 256px;
-		width: calc(1536px / 6);
-		background: url(/img/rungirl.avif);
-		overflow: hidden;
-		animation: animateGirl 1s steps(6) infinite;
-	}
-	@keyframes animateGirl {
-		from {
-			background-position: 0;
-		}
-		to {
-			background-position: 1536px;
-		}
 	}
 </style>

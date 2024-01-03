@@ -1,21 +1,21 @@
-<div id="girl" class="-ml-[228px] -mt-[165px]"></div>
+<div id="motion" class="-ml-[140px] -mt-[105px] z-30"></div>
 
 <style>
-	#girl {
+	#motion {
 		scale: 0.1;
 		position: absolute;
-		height: 310px;
-		width: calc(1369px / 3);
+		height: 210px;
+		width: calc(1681px / 6);
 		background: url(/img/runcat.png);
 		overflow: hidden;
-		animation: animateGirl 1s steps(3) infinite;
+		animation: moving 1s steps(6) infinite;
 	}
-	@keyframes animateGirl {
+	@keyframes moving {
 		from {
 			background-position: 0;
 		}
 		to {
-			background-position: 1369px;
+			background-position: 1681px;
 		}
 	}
 </style>
