@@ -2,7 +2,7 @@
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import { beep } from '$lib/sound';
 	import { isLoading, isPip, isPlay, worker } from '$lib/store';
-	import { init, start, pause, clickPip } from '$lib/webcam';
+	import { init, start, stop, clickPip } from '$lib/webcam';
 	import { onMount } from 'svelte';
 
 	let videoHTML: HTMLVideoElement;
@@ -80,17 +80,29 @@
 	</div>
 	<!-- START / STOP BTN -->
 	<div class="w-full flex justify-center gap-10">
-		<button
-			disabled={$isPlay}
-			class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-green-300 hover:scale-[1.02] duration-100"
-			on:click={() => {
-				start({ videoHTML, webcamHTML });
-			}}>공부 시작</button
-		>
+		{#if $isLoading || !$isPlay}
+			<!-- content here -->
+			<button
+				disabled={$isPlay}
+				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-green-300 hover:scale-[1.02] duration-100"
+				on:click={() => {
+					start({ videoHTML, webcamHTML });
+				}}>공부 시작</button
+			>
+		{:else}
+			<button
+				disabled={!$isPlay}
+				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-green-300 hover:scale-[1.02] duration-100"
+				on:click={() => {
+					start({ videoHTML, webcamHTML });
+				}}>일시 정지</button
+			>
+		{/if}
+
 		<button
 			disabled={$isLoading || !$isPlay}
 			class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-red-300 hover:scale-[1.02] duration-100"
-			on:click={pause}>정지</button
+			on:click={stop}>정지</button
 		>
 	</div>
 

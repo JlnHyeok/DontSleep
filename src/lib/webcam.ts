@@ -1,5 +1,6 @@
 import * as tmImage from '@teachablemachine/image';
-import { isLoading, isPlay, worker } from './store';
+import { isLoading, isPlay, isWebcamReady, worker } from './store';
+import { sendMessage } from './thread';
 
 const modelURL: string = import.meta.env.VITE_MODEL_URL;
 const metadataURL: string = import.meta.env.VITE_METADATA_URL;
@@ -11,6 +12,7 @@ export async function init() {
 	model = await tmImage.load(modelURL, metadataURL);
 	maxPredictions = model.getTotalClasses();
 	webcam = new tmImage.Webcam(300, 300, flip); // width, height, flip
+	isWebcamReady.set(true);
 }
 
 export async function start({
@@ -22,7 +24,7 @@ export async function start({
 }) {
 	isPlay.set(true);
 	isLoading.set(true);
-
+	webcam = new tmImage.Webcam(300, 300, flip);
 	await webcam.setup(); // request access to the webcam
 	await webcam.play();
 
@@ -40,14 +42,14 @@ export async function predict() {
 	);
 	let tag: string = prediction[0].className;
 	let prob: number = Number(prediction[0].probability.toFixed(2));
-	worker.subscribe((worker) => {
-		if (tag == 'sleep' && prob >= 0.6) {
-			worker.postMessage({ status: 'sleep' });
-		} else if (tag == 'sleep' && prob < 0.6) {
-			worker.postMessage({ status: 'study' });
-		}
-	});
+
+	if (tag == 'sleep' && prob >= 0.6) {
+		sendMessage({ status: 'sleep' });
+	} else if (tag == 'sleep' && prob < 0.6) {
+		sendMessage({ status: 'study' });
+	}
 }
+
 export async function loop() {
 	if (webcam) {
 		webcam.update(); // update the webcam frame
@@ -56,7 +58,7 @@ export async function loop() {
 	}
 }
 
-export function pause() {
+export function stop() {
 	webcam.pause();
 	if (document.pictureInPictureElement) {
 		document.exitPictureInPicture();
