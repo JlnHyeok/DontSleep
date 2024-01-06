@@ -1,4 +1,4 @@
-<div id="motion" class="-ml-[106px] -mt-[120px] z-30"></div>
+<div id="motion" class="-ml-[106px] -mt-[120px] z-30 ![animation-play-state:paused]"></div>
 
 <style>
 	#motion {

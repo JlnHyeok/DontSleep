@@ -1,12 +1,12 @@
-<div id="motion" class="-ml-[140px] -mt-[105px] z-30"></div>
+<div id="motion" class="-ml-[128px] -mt-[128px] ![animation-play-state:paused]"></div>
 
 <style>
 	#motion {
 		scale: 0.1;
 		position: absolute;
-		height: 210px;
-		width: calc(1681px / 6);
-		background: url(/img/runcat.png);
+		height: 256px;
+		width: calc(1536px / 6);
+		background: url(/img/rungirl.avif);
 		overflow: hidden;
 		animation: moving 1s steps(6) infinite;
 	}
@@ -15,7 +15,7 @@
 			background-position: 0;
 		}
 		to {
-			background-position: 1681px;
+			background-position: 1536px;
 		}
 	}
 </style>

@@ -1,30 +1,32 @@
 import * as tmImage from '@teachablemachine/image';
-import { isLoading, isPlay, isWebcamReady, worker } from './store';
-import { sendMessage } from './thread';
+import { isLoading, isPlay, timerForStudy } from '$lib/store';
+import { sendMessage } from '$lib/thread';
 
 const modelURL: string = import.meta.env.VITE_MODEL_URL;
 const metadataURL: string = import.meta.env.VITE_METADATA_URL;
 const flip = true; // whether to flip the webcam
+let webcamStatus: 'play' | 'stop';
 
 export let model: tmImage.CustomMobileNet, webcam: tmImage.Webcam, maxPredictions: number;
 
 export async function init() {
 	model = await tmImage.load(modelURL, metadataURL);
 	maxPredictions = model.getTotalClasses();
-	webcam = new tmImage.Webcam(300, 300, flip); // width, height, flip
-	isWebcamReady.set(true);
 }
 
 export async function start({
 	videoHTML,
-	webcamHTML
+	webcamHTML,
+	inputValue
 }: {
 	videoHTML: HTMLVideoElement;
 	webcamHTML: HTMLDivElement;
+	inputValue: number;
 }) {
-	isPlay.set(true);
+	isPlay.set('play');
 	isLoading.set(true);
-	webcam = new tmImage.Webcam(300, 300, flip);
+	webcam = new tmImage.Webcam(300, 300, flip); // width, height, flip
+
 	await webcam.setup(); // request access to the webcam
 	await webcam.play();
 
@@ -33,7 +35,8 @@ export async function start({
 	window.requestAnimationFrame(loop);
 	webcamHTML.appendChild(webcam.canvas);
 	isLoading.set(false);
-	// worker?.postMessage({ time: inputValue });
+	toggleAnimation('play');
+	sendMessage({ time: inputValue });
 }
 
 export async function predict() {
@@ -51,20 +54,26 @@ export async function predict() {
 }
 
 export async function loop() {
-	if (webcam) {
+	if (webcam.canvas) {
 		webcam.update(); // update the webcam frame
 		await predict();
 		window.requestAnimationFrame(loop);
 	}
 }
 
+export function pause() {
+	toggleAnimation('pause');
+	isPlay.set('pause');
+	stopAction();
+}
+
 export function stop() {
-	webcam.pause();
-	if (document.pictureInPictureElement) {
-		document.exitPictureInPicture();
-	}
-	document.getElementById('webcam')?.removeChild(webcam.canvas);
-	isPlay.set(false);
+	toggleAnimation('stop');
+	isPlay.set('stop');
+
+	if (webcamStatus == 'stop') return;
+
+	stopAction();
 }
 
 export async function clickPip(videoHTML: HTMLVideoElement) {
@@ -73,4 +82,42 @@ export async function clickPip(videoHTML: HTMLVideoElement) {
 	} else {
 		document.exitPictureInPicture();
 	}
+}
+
+function stopAction() {
+	webcam.stop();
+	if (document.pictureInPictureElement) {
+		document.exitPictureInPicture();
+	}
+	document.getElementById('webcam')?.removeChild(webcam.canvas);
+	timerForStudy.subscribe((timer) => {
+		clearTimeout(timer);
+	});
+	webcamStatus = 'stop';
+}
+
+function toggleAnimation(isPlay: 'play' | 'stop' | 'pause') {
+	const runHTML: HTMLElement = document.getElementById('run')!;
+	const motionHTML: HTMLElement = document.getElementById('motion')!;
+	const fillHTML: HTMLElement = document.getElementById('fill')!;
+
+	if (isPlay == 'play') {
+		runHTML.classList.remove('![animation-play-state:paused]');
+		motionHTML.classList.remove('![animation-play-state:paused]');
+		fillHTML.classList.remove('![animation-play-state:paused]');
+	} else {
+		if (isPlay == 'stop') {
+			resetAnimation(runHTML, 'run');
+			resetAnimation(fillHTML, 'fill');
+		}
+		runHTML.classList.add('![animation-play-state:paused]');
+		motionHTML.classList.add('![animation-play-state:paused]');
+		fillHTML.classList.add('![animation-play-state:paused]');
+	}
+}
+
+function resetAnimation(element: HTMLElement, className: string) {
+	element.classList.remove(className);
+	void element.offsetWidth;
+	element.classList.add(className);
 }

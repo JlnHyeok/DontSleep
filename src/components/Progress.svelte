@@ -20,9 +20,6 @@
 </div>
 
 <style>
-	body {
-		background: #ffffff;
-	}
 	.container {
 		margin: 100px auto;
 		width: 600px;

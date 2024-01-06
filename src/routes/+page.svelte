@@ -1,15 +1,23 @@
 <script lang="ts">
-	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import ProgressBar from '$components/ProgressBar.svelte';
 	import { beep } from '$lib/sound';
-	import { isLoading, isPip, isPlay, worker } from '$lib/store';
-	import { init, start, stop, clickPip } from '$lib/webcam';
+	import {
+		isLoading,
+		isPip,
+		isPlay,
+		progressTime,
+		studyTargetTime,
+		timerForStudy,
+		worker
+	} from '$lib/store';
+	import { init, start, stop, clickPip, pause } from '$lib/webcam';
 	import { onMount } from 'svelte';
 
 	let videoHTML: HTMLVideoElement;
 	let webcamHTML: HTMLDivElement;
 
 	let status: string = '대기';
-	let inputValue: number = 0;
+	let inputValue: number = 5;
 
 	onMount(async () => {
 		videoHTML = document.getElementById('video') as HTMLVideoElement;
@@ -18,6 +26,7 @@
 		await init();
 	});
 
+	//#region Function
 	const loadWorker = async () => {
 		const Worker = await import('$lib/worker?worker');
 		$worker = new Worker.default();
@@ -26,13 +35,24 @@
 			beep(status);
 		};
 	};
+
+	function startTimer() {
+		$timerForStudy = setInterval(function () {
+			$progressTime++;
+			console.log($progressTime);
+		}, $studyTargetTime / 100);
+	}
+	function stopTimer() {
+		clearInterval($timerForStudy);
+	}
+	//#endregion
 </script>
 
 <!-- svelte-ignore a11y-media-has-caption -->
-<div class="z-10 w-[400px] xs:h-3/4 h-full relative">
+<div class="z-10 w-[400px] xs:h-3/4 h-[90%] relative">
 	<!-- TITLE -->
 	<div class="w-full flex justify-center mt-14 mb-2">
-		<span class="font-extrabold text-[36px]"> 나만의 온라인 스터디룸 </span>
+		<span class="font-extrabold text-[36px]"> 나만의 스터디룸 </span>
 	</div>
 
 	<!-- VIDEO (HIDDEN) -->
@@ -47,9 +67,9 @@
 		<button
 			id="pip"
 			class="absolute z-30 top-1 right-2 font-bold rounded-lg duration-500 opacity-100
-						{$isPlay ? `hover:scale-[1.04]` : `!opacity-0`}"
+						{$isPlay == 'play' && !$isLoading ? `hover:scale-[1.04]` : `!opacity-0`}"
 			on:click={() => clickPip(videoHTML)}
-			disabled={$isPlay ? false : true}
+			disabled={$isPlay == 'play' && !$isLoading ? false : true}
 		>
 			<img src="/icon/pip.svg" alt="pip" width={30} />
 		</button>
@@ -63,7 +83,7 @@
 
 		<!-- WEBCAM -->
 		<div id="webcam"></div>
-		{#if $isPlay}
+		{#if $isPlay == 'play'}
 			{#if $isPip}
 				<div class="w-full absolute h-full bg-gray-500"></div>
 			{/if}
@@ -74,44 +94,56 @@
 		{/if}
 	</div>
 
+	<!-- TIME SETTING SECTION -->
 	<div class="m-auto w-[300px] h-14 flex justify-center items-center">
-		시간 설정 공간
-		<input type="number" required bind:value={inputValue} step={10} min={0} max={60} />
+		<label for="timeSetting">시간 설정</label>
+		<input
+			type="number"
+			name="timeSetting"
+			id="timeSetting"
+			required
+			bind:value={inputValue}
+			step={10}
+			min={0}
+			max={60}
+		/>
+		Sec
 	</div>
+
 	<!-- START / STOP BTN -->
 	<div class="w-full flex justify-center gap-10">
-		{#if $isLoading || !$isPlay}
+		{#if $isLoading || $isPlay !== 'play'}
 			<!-- content here -->
 			<button
-				disabled={$isPlay}
-				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-green-300 hover:scale-[1.02] duration-100"
+				disabled={$isPlay == 'play'}
+				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-blue-300 hover:scale-[1.02] duration-100"
 				on:click={() => {
-					start({ videoHTML, webcamHTML });
+					start({ videoHTML, webcamHTML, inputValue });
+					startTimer();
 				}}>공부 시작</button
 			>
 		{:else}
 			<button
-				disabled={!$isPlay}
+				disabled={$isPlay !== 'play'}
 				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-green-300 hover:scale-[1.02] duration-100"
 				on:click={() => {
-					start({ videoHTML, webcamHTML });
+					pause();
+					stopTimer();
 				}}>일시 정지</button
 			>
 		{/if}
 
 		<button
-			disabled={$isLoading || !$isPlay}
+			disabled={$isLoading || $isPlay == 'stop'}
 			class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-red-300 hover:scale-[1.02] duration-100"
 			on:click={stop}>정지</button
 		>
 	</div>
 
-	{#if $isPlay && !$isLoading}
-		<!-- content here -->
-		<div class="w-full mt-10">
-			<ProgressBar />
-		</div>
-	{/if}
+	<!-- content here -->
+	<div class="w-full mt-10">
+		<ProgressBar />
+	</div>
 </div>
 
 <style>

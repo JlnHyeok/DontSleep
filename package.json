@@ -41,6 +41,7 @@
 	"dependencies": {
 		"@teachablemachine/image": "^0.8.5",
 		"@tensorflow/tfjs": "^4.15.0",
-		"node-sass": "^9.0.0"
+		"node-sass": "^9.0.0",
+		"timer.js": "^1.0.4"
 	}
 }

@@ -3,6 +3,8 @@ let time = 3 * 1000;
 
 self.onmessage = (e) => {
 	if (e.data.time) time = e.data.time * 1000;
+
+	// For Alarm
 	if (e.data.status == 'sleep') {
 		if (!timer) {
 			timer = setTimeout(() => {
