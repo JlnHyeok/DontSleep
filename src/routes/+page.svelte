@@ -95,48 +95,40 @@
 	</div>
 
 	<!-- TIME SETTING SECTION -->
-	<div class="m-auto w-[300px] h-14 flex justify-center items-center">
-		<label for="timeSetting">시간 설정</label>
-		<input
-			type="number"
-			name="timeSetting"
-			id="timeSetting"
-			required
-			bind:value={inputValue}
-			step={10}
-			min={0}
-			max={60}
-		/>
-		Sec
+	<div class="m-auto w-[290px] h-14 flex justify-center items-center">
+		<div class="relative bg-purple-400 w-[250px] h-1/2 rounded-lg flex justify-center items-center">
+			<div>시간 설정</div>
+			<div class="absolute right-4"><img src="/img/clock.png" alt="clock" /></div>
+		</div>
 	</div>
 
 	<!-- START / STOP BTN -->
-	<div class="w-full flex justify-center gap-10">
+	<div class="w-[300px] m-auto flex justify-center gap-10">
 		{#if $isLoading || $isPlay !== 'play'}
 			<!-- content here -->
 			<button
 				disabled={$isPlay == 'play'}
-				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-blue-300 hover:scale-[1.02] duration-100"
+				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-blue-300 hover:scale-[1.02] hover:bg-blue-400 hover:text-gray-100 duration-300"
 				on:click={() => {
 					start({ videoHTML, webcamHTML, inputValue });
 					startTimer();
-				}}>공부 시작</button
+				}}>START</button
 			>
 		{:else}
 			<button
 				disabled={$isPlay !== 'play'}
-				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-green-300 hover:scale-[1.02] duration-100"
+				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-green-300 hover:scale-[1.02] hover:bg-green-400 hover:text-gray-100 duration-300"
 				on:click={() => {
 					pause();
 					stopTimer();
-				}}>일시 정지</button
+				}}>PAUSE</button
 			>
 		{/if}
 
 		<button
 			disabled={$isLoading || $isPlay == 'stop'}
-			class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-red-300 hover:scale-[1.02] duration-100"
-			on:click={stop}>정지</button
+			class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-red-300 hover:scale-[1.02] hover:bg-red-400 hover:text-gray-100 duration-300"
+			on:click={stop}>STOP</button
 		>
 	</div>
 

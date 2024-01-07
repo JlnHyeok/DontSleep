@@ -35,6 +35,7 @@ export async function start({
 	window.requestAnimationFrame(loop);
 	webcamHTML.appendChild(webcam.canvas);
 	isLoading.set(false);
+	webcamStatus = 'play';
 	toggleAnimation('play');
 	sendMessage({ time: inputValue });
 }
