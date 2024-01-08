@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Timer from 'timer.js';
 	import ProgressBar from '$components/ProgressBar.svelte';
 	import { beep } from '$lib/sound';
 	import {
@@ -10,14 +11,30 @@
 		timerForStudy,
 		worker
 	} from '$lib/store';
-	import { init, start, stop, clickPip, pause } from '$lib/webcam';
+	import { init, start, stop, clickPip, pause, toggleAnimation } from '$lib/webcam';
 	import { onMount } from 'svelte';
+	import { msToHMS } from '$lib/helper';
 
 	let videoHTML: HTMLVideoElement;
 	let webcamHTML: HTMLDivElement;
+	let hour: number = 1;
+	let min: number = 0;
+	let sec: number = 0;
+
+	$timerForStudy = new Timer({
+		tick: 1,
+		ontick: function (ms: number) {
+			$progressTime = msToHMS(ms);
+		},
+		onend: function () {
+			$progressTime = '0h 00m 00s';
+		},
+		onstop: function () {
+			$progressTime = '0h 00m 00s';
+		}
+	});
 
 	let status: string = '대기';
-	let inputValue: number = 5;
 
 	onMount(async () => {
 		videoHTML = document.getElementById('video') as HTMLVideoElement;
@@ -37,13 +54,20 @@
 	};
 
 	function startTimer() {
-		$timerForStudy = setInterval(function () {
-			$progressTime++;
-			console.log($progressTime);
-		}, $studyTargetTime / 100);
+		start({ videoHTML, webcamHTML, inputValue: 5 });
+		$studyTargetTime = hour * 3600 + min * 60 + sec;
+		console.log($studyTargetTime);
+		$timerForStudy.start($studyTargetTime);
 	}
+
+	function pauseTimer() {
+		pause();
+		$timerForStudy.pause();
+	}
+
 	function stopTimer() {
-		clearInterval($timerForStudy);
+		stop();
+		$timerForStudy.stop();
 	}
 	//#endregion
 </script>
@@ -97,8 +121,36 @@
 	<!-- TIME SETTING SECTION -->
 	<div class="m-auto w-[290px] h-14 flex justify-center items-center">
 		<div class="relative bg-purple-400 w-[250px] h-1/2 rounded-lg flex justify-center items-center">
-			<div>시간 설정</div>
-			<div class="absolute right-4"><img src="/img/clock.png" alt="clock" /></div>
+			<div class="flex justify-center gap-2">
+				<input
+					disabled={$isPlay == 'play' || $isPlay == 'pause'}
+					type="number"
+					name="hour"
+					id="hour"
+					class="w-10"
+					bind:value={hour}
+				/>
+				<label for="hour">시간</label>
+				<input
+					disabled={$isPlay == 'play' || $isPlay == 'pause'}
+					type="number"
+					name="min"
+					id="min"
+					class="w-10"
+					bind:value={min}
+				/>
+				<label for="min">분</label>
+				<input
+					disabled={$isPlay == 'play' || $isPlay == 'pause'}
+					type="number"
+					name="sec"
+					id="sec"
+					class="w-10"
+					bind:value={sec}
+				/>
+				<label for="sec">초</label>
+			</div>
+			<!-- <div class=""><img src="/img/clock.png" alt="clock" /></div> -->
 		</div>
 	</div>
 
@@ -109,26 +161,20 @@
 			<button
 				disabled={$isPlay == 'play'}
 				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-blue-300 hover:scale-[1.02] hover:bg-blue-400 hover:text-gray-100 duration-300"
-				on:click={() => {
-					start({ videoHTML, webcamHTML, inputValue });
-					startTimer();
-				}}>START</button
+				on:click={startTimer}>START</button
 			>
 		{:else}
 			<button
 				disabled={$isPlay !== 'play'}
 				class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-green-300 hover:scale-[1.02] hover:bg-green-400 hover:text-gray-100 duration-300"
-				on:click={() => {
-					pause();
-					stopTimer();
-				}}>PAUSE</button
+				on:click={pauseTimer}>PAUSE</button
 			>
 		{/if}
 
 		<button
 			disabled={$isLoading || $isPlay == 'stop'}
 			class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-red-300 hover:scale-[1.02] hover:bg-red-400 hover:text-gray-100 duration-300"
-			on:click={stop}>STOP</button
+			on:click={stopTimer}>STOP</button
 		>
 	</div>
 

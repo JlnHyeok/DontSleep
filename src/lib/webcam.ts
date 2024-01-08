@@ -1,5 +1,5 @@
 import * as tmImage from '@teachablemachine/image';
-import { isLoading, isPlay, timerForStudy } from '$lib/store';
+import { isLoading, isPlay } from '$lib/store';
 import { sendMessage } from '$lib/thread';
 
 const modelURL: string = import.meta.env.VITE_MODEL_URL;
@@ -85,19 +85,7 @@ export async function clickPip(videoHTML: HTMLVideoElement) {
 	}
 }
 
-function stopAction() {
-	webcam.stop();
-	if (document.pictureInPictureElement) {
-		document.exitPictureInPicture();
-	}
-	document.getElementById('webcam')?.removeChild(webcam.canvas);
-	timerForStudy.subscribe((timer) => {
-		clearTimeout(timer);
-	});
-	webcamStatus = 'stop';
-}
-
-function toggleAnimation(isPlay: 'play' | 'stop' | 'pause') {
+export function toggleAnimation(isPlay: 'play' | 'stop' | 'pause') {
 	const runHTML: HTMLElement = document.getElementById('run')!;
 	const motionHTML: HTMLElement = document.getElementById('motion')!;
 	const fillHTML: HTMLElement = document.getElementById('fill')!;
@@ -115,6 +103,14 @@ function toggleAnimation(isPlay: 'play' | 'stop' | 'pause') {
 		motionHTML.classList.add('![animation-play-state:paused]');
 		fillHTML.classList.add('![animation-play-state:paused]');
 	}
+}
+function stopAction() {
+	webcam.stop();
+	if (document.pictureInPictureElement) {
+		document.exitPictureInPicture();
+	}
+	document.getElementById('webcam')?.removeChild(webcam.canvas);
+	webcamStatus = 'stop';
 }
 
 function resetAnimation(element: HTMLElement, className: string) {
