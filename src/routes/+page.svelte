@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AlarmModal from './../components/AlarmModal.svelte';
 	import Timer from 'timer.js';
 	import ProgressBar from '$components/ProgressBar.svelte';
 	import { beep } from '$lib/sound';
@@ -20,6 +21,7 @@
 	let hour: number = 1;
 	let min: number = 0;
 	let sec: number = 0;
+	let showAlarmStopModal: boolean = false;
 
 	$timerForStudy = new Timer({
 		tick: 1,
@@ -49,15 +51,22 @@
 		$worker = new Worker.default();
 		$worker.onmessage = (e) => {
 			status = e.data.status;
-			beep(status);
+			if (status == 'sleep' && showAlarmStopModal == false) {
+				showAlarmStopModal = true;
+				beep(status);
+			}
 		};
 	};
 
 	function startTimer() {
+		if ($isPlay == 'stop') {
+			$studyTargetTime = hour * 3600 + min * 60 + sec;
+			if ($studyTargetTime <= 10 || $studyTargetTime > 3 * 60 * 60) return;
+			$timerForStudy.start($studyTargetTime);
+		} else if ($isPlay == 'pause') {
+			$timerForStudy.start();
+		}
 		start({ videoHTML, webcamHTML, inputValue: 5 });
-		$studyTargetTime = hour * 3600 + min * 60 + sec;
-		console.log($studyTargetTime);
-		$timerForStudy.start($studyTargetTime);
 	}
 
 	function pauseTimer() {
@@ -73,19 +82,14 @@
 </script>
 
 <!-- svelte-ignore a11y-media-has-caption -->
-<div class="z-10 w-[400px] xs:h-3/4 h-[90%] relative">
-	<!-- TITLE -->
-	<div class="w-full flex justify-center mt-14 mb-2">
-		<span class="font-extrabold text-[36px]"> 나만의 스터디룸 </span>
-	</div>
-
+<div class="z-10 w-[350px] h-3/4 mt-14 relative">
 	<!-- VIDEO (HIDDEN) -->
 	<video id="video" src="" />
 
 	<!-- WEBCAM DISPLAY WRAP -->
 	<div
 		class="m-auto relative h-[300px] w-[300px] rounded-[10px] overflow-hidden bg-gray-200 border-4 border-black flex justify-center items-center
-		{status == 'sleep' && 'animate-shake'} "
+		{showAlarmStopModal && 'animate-shake'} "
 	>
 		<!-- PIP BTN -->
 		<button
@@ -120,42 +124,59 @@
 
 	<!-- TIME SETTING SECTION -->
 	<div class="m-auto w-[290px] h-14 flex justify-center items-center">
-		<div class="relative bg-purple-400 w-[250px] h-1/2 rounded-lg flex justify-center items-center">
-			<div class="flex justify-center gap-2">
-				<input
-					disabled={$isPlay == 'play' || $isPlay == 'pause'}
-					type="number"
-					name="hour"
-					id="hour"
-					class="w-10"
-					bind:value={hour}
-				/>
-				<label for="hour">시간</label>
-				<input
-					disabled={$isPlay == 'play' || $isPlay == 'pause'}
-					type="number"
-					name="min"
-					id="min"
-					class="w-10"
-					bind:value={min}
-				/>
-				<label for="min">분</label>
-				<input
-					disabled={$isPlay == 'play' || $isPlay == 'pause'}
-					type="number"
-					name="sec"
-					id="sec"
-					class="w-10"
-					bind:value={sec}
-				/>
-				<label for="sec">초</label>
+		<div class="relative w-[250px] h-full rounded-lg flex justify-center items-center">
+			<div class="flex justify-between w-full">
+				<label
+					for="hour"
+					class="flex w-[70px] rounded-md justify-center items-center gap-[6px] duration-300
+					{$isPlay == 'stop' ? 'bg-gray-100' : 'bg-gray-200 opacity-70'}"
+				>
+					<input
+						disabled={$isPlay == 'play' || $isPlay == 'pause'}
+						type="number"
+						name="hour"
+						id="hour"
+						class="w-10 h-8 text-center outline-none bg-inherit text-lg font-bold text-gray-600"
+						bind:value={hour}
+					/>
+					<span class="flex text-sm mt-1 justify-center">h</span>
+				</label>
+				<label
+					for="min"
+					class="flex w-[70px] rounded-md justify-center items-center gap-[6px] duration-300
+				{$isPlay == 'stop' ? 'bg-gray-100' : 'bg-gray-200 opacity-70'}"
+				>
+					<input
+						disabled={$isPlay == 'play' || $isPlay == 'pause'}
+						type="number"
+						name="min"
+						id="min"
+						class="w-10 h-8 text-center rounded-md outline-none bg-inherit text-lg font-bold text-gray-600"
+						bind:value={min}
+					/>
+					<span class="flex text-sm mt-1 justify-center">m</span>
+				</label>
+				<label
+					for="sec"
+					class="flex w-[70px] rounded-md justify-center items-center gap-[6px] duration-300
+				{$isPlay == 'stop' ? 'bg-gray-100' : 'bg-gray-200 opacity-70'}"
+				>
+					<input
+						disabled={$isPlay == 'play' || $isPlay == 'pause'}
+						type="number"
+						name="sec"
+						id="sec"
+						class="w-10 h-8 text-center rounded-md outline-none bg-inherit text-lg font-bold text-gray-600"
+						bind:value={sec}
+					/>
+					<span class="flex text-sm mt-1 justify-center">s</span>
+				</label>
 			</div>
-			<!-- <div class=""><img src="/img/clock.png" alt="clock" /></div> -->
 		</div>
 	</div>
 
 	<!-- START / STOP BTN -->
-	<div class="w-[300px] m-auto flex justify-center gap-10">
+	<div class="w-[300px] m-auto mt-2 flex justify-center gap-10">
 		{#if $isLoading || $isPlay !== 'play'}
 			<!-- content here -->
 			<button
@@ -183,6 +204,8 @@
 		<ProgressBar />
 	</div>
 </div>
+
+<AlarmModal bind:showModal={showAlarmStopModal} />
 
 <style>
 	#video {

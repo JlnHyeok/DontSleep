@@ -15,3 +15,6 @@ export let isWebcamReady: Writable<boolean> = writable<boolean>(false);
 export let isPlay: Writable<TPlayingStatus> = writable<TPlayingStatus>('stop');
 export let isLoading: Writable<boolean> = writable<boolean>(false);
 export let isPip: Writable<boolean> = writable<boolean>(false);
+
+// For Setting
+export let backgroundColor: Writable<string> = writable<string>('bg-blue-400');

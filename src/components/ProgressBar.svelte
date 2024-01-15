@@ -9,14 +9,14 @@
 	<div id="progressBarFilling">
 		<div
 			id="run"
-			style={`--study-target-time:${$studyTargetTime - 1}s`}
+			style={$studyTargetTime > 0 ? `--study-target-time:${$studyTargetTime - 1}s` : ''}
 			class="absolute -top-2 w-2 h-2 run ![animation-play-state:paused]"
 		>
-			<RunRabbit />
+			<RunCat />
 		</div>
 		<div
 			id="fill"
-			style={`--study-target-time:${$studyTargetTime - 1}s`}
+			style={$studyTargetTime > 0 ? `--study-target-time:${$studyTargetTime - 1}s` : ''}
 			class="fill ![animation-play-state:paused]"
 		></div>
 	</div>
@@ -84,7 +84,7 @@
 	}
 	span {
 		display: inline-block;
-		color: #4f9cc0;
+		color: #13458b;
 		font-size: 1rem;
 		font-weight: 700;
 		/* text-transform: uppercase; */
@@ -94,4 +94,27 @@
 	span:last-child {
 		float: right;
 	}
+
+	/* .speech-bubble {
+		position: relative;
+		margin-right: 0px;
+		margin-top: 10px;
+		background: #a9cdd1;
+		border-radius: 0.4em;
+	}
+
+	.speech-bubble:after {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 50%;
+		width: 0;
+		height: 0;
+		border: 8px solid transparent;
+		border-right-color: #a9cdd1;
+		border-left: 0;
+		border-bottom: 0;
+		margin-top: -2px;
+		margin-left: -8px;
+	} */
 </style>
