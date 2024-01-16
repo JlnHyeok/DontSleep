@@ -3,6 +3,10 @@
 	import { onMount } from 'svelte';
 	import '../app.css';
 	import { isPip } from '$lib/store';
+	import SettingModal from '$components/modal/SettingModal.svelte';
+	import { browser } from '$app/environment';
+
+	let showSettingModal: boolean = false;
 
 	onMount(() => {
 		document.addEventListener('enterpictureinpicture', () => {
@@ -14,23 +18,24 @@
 	});
 </script>
 
-<div
-	class="w-full min-w-[350px] h-screen flex justify-center items-center bg-center bg-cover {$backgroundColor}"
->
+{#if browser}
+	<!-- content here -->
 	<div
-		class="w-full min-w-[350px] h-full flex items-center justify-center absolute z-0 bg-white opacity-75"
-	></div>
-	<div class="absolute w-full min-w-[350px] h-16 top-0 flex justify-end items-center bg-inherit">
-		<!-- TITLE -->
-		<div class="w-full flex justify-center">
-			<span class="font-extrabold text-[36px]"> 나만의 스터디룸 </span>
+		class="w-full min-w-[350px] h-screen flex justify-center items-center bg-center bg-cover {$backgroundColor}"
+	>
+		<div
+			class="w-full min-w-[350px] h-full flex items-center justify-center absolute z-0 bg-white opacity-75"
+		></div>
+		<div class="absolute w-full min-w-[350px] h-16 top-0 flex justify-end items-center bg-inherit">
+			<!-- TITLE -->
+			<div class="w-full flex justify-center">
+				<span class="font-extrabold text-[36px]"> 나만의 스터디룸 </span>
+			</div>
+			<button on:click={() => (showSettingModal = true)} class="absolute right-4">
+				<img src="/icon/setting.png" alt="setting" width="40" />
+			</button>
 		</div>
-		<img
-			src="/icon/setting.png"
-			alt="setting"
-			width="40"
-			class="absolute right-4 hover:cursor-pointer"
-		/>
+		<slot />
+		<SettingModal bind:showModal={showSettingModal} />
 	</div>
-	<slot />
-</div>
+{/if}

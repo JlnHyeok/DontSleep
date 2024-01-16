@@ -1,8 +1,13 @@
 <script lang="ts">
-	import { timerForStudy, progressTime, studyTargetTime } from '$lib/store';
+	import { timerForStudy, progressTime, studyTargetTime, runAvartar } from '$lib/store';
 	import RunGirl from './avatar/RunGirl.svelte';
 	import RunCat from './avatar/RunCat.svelte';
 	import RunRabbit from './avatar/RunRabbit.svelte';
+	import RunSlime from './avatar/RunSlime.svelte';
+	import RunDoraemong from './avatar/RunDoraemong.svelte';
+	import RunBrownDog from './avatar/RunBrownDog.svelte';
+	import RunWhiteDog from './avatar/RunWhiteDog.svelte';
+	import RunBird from './avatar/RunBird.svelte';
 </script>
 
 <div id="container" class="w-[300px] m-auto">
@@ -10,9 +15,9 @@
 		<div
 			id="run"
 			style={$studyTargetTime > 0 ? `--study-target-time:${$studyTargetTime - 1}s` : ''}
-			class="absolute -top-2 w-2 h-2 run ![animation-play-state:paused]"
+			class="absolute -top-3 w-2 h-2 run ![animation-play-state:paused]"
 		>
-			<RunCat />
+			<svelte:component this={$runAvartar.component} />
 		</div>
 		<div
 			id="fill"

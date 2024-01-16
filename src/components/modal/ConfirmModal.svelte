@@ -4,7 +4,6 @@
 
 	let dialog: HTMLDialogElement; // HTMLDialogElement
 	function onClickButton() {
-		beep('stop');
 		dialog.close();
 	}
 	$: if (dialog && showModal) dialog.showModal();
@@ -33,7 +32,7 @@
 		padding: 0;
 	}
 	dialog::backdrop {
-		background: rgba(0, 0, 0, 0.3);
+		background: rgba(0, 0, 0, 0.6);
 	}
 	dialog > div {
 		padding: 1em;

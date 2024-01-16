@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AlarmModal from './../components/AlarmModal.svelte';
+	import AlarmModal from '../components/modal/AlarmModal.svelte';
 	import Timer from 'timer.js';
 	import ProgressBar from '$components/ProgressBar.svelte';
 	import { beep } from '$lib/sound';
@@ -12,7 +12,7 @@
 		timerForStudy,
 		worker
 	} from '$lib/store';
-	import { init, start, stop, clickPip, pause, toggleAnimation } from '$lib/webcam';
+	import { init, start, stop, clickPip, pause } from '$lib/webcam';
 	import { onMount } from 'svelte';
 	import { msToHMS } from '$lib/helper';
 
@@ -195,7 +195,7 @@
 		<button
 			disabled={$isLoading || $isPlay == 'stop'}
 			class="border-black text-xl font-bold border-2 w-[125px] h-10 rounded-lg bg-red-300 hover:scale-[1.02] hover:bg-red-400 hover:text-gray-100 duration-300"
-			on:click={stopTimer}>STOP</button
+			on:click={stopTimer}>RESET</button
 		>
 	</div>
 
