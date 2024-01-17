@@ -41,6 +41,7 @@
 	onMount(async () => {
 		videoHTML = document.getElementById('video') as HTMLVideoElement;
 		webcamHTML = document.getElementById('webcam') as HTMLDivElement;
+
 		await loadWorker();
 		await init();
 	});
@@ -54,6 +55,7 @@
 			if (status == 'sleep' && showAlarmStopModal == false) {
 				showAlarmStopModal = true;
 				beep(status);
+				window.navigator.vibrate(10000);
 			}
 		};
 	};
@@ -61,7 +63,7 @@
 	function startTimer() {
 		if ($isPlay == 'stop') {
 			$studyTargetTime = hour * 3600 + min * 60 + sec;
-			if ($studyTargetTime <= 10 || $studyTargetTime > 3 * 60 * 60) return;
+			if ($studyTargetTime < 10 || $studyTargetTime > 3 * 60 * 60) return;
 			$timerForStudy.start($studyTargetTime);
 		} else if ($isPlay == 'pause') {
 			$timerForStudy.start();

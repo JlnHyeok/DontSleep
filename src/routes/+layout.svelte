@@ -24,7 +24,7 @@
 		class="w-full min-w-[350px] h-screen flex justify-center items-center bg-center bg-cover {$backgroundColor}"
 	>
 		<div
-			class="w-full min-w-[350px] h-full flex items-center justify-center absolute z-0 bg-white opacity-75"
+			class="w-full min-w-[350px] h-screen flex items-center justify-center absolute z-0 bg-white opacity-75"
 		></div>
 		<div class="absolute w-full min-w-[350px] h-16 top-0 flex justify-end items-center bg-inherit">
 			<!-- TITLE -->

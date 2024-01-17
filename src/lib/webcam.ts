@@ -1,6 +1,7 @@
 import * as tmImage from '@teachablemachine/image';
 import { isLoading, isPlay } from '$lib/store';
 import { sendMessage } from '$lib/thread';
+import { browser } from '$app/environment';
 
 const modelURL: string = import.meta.env.VITE_MODEL_URL;
 const metadataURL: string = import.meta.env.VITE_METADATA_URL;
@@ -28,6 +29,10 @@ export async function start({
 	webcam = new tmImage.Webcam(300, 300, flip); // width, height, flip
 
 	await webcam.setup(); // request access to the webcam
+
+	videoHTML.muted = true;
+	videoHTML.setAttribute('playsinline', 'true');
+
 	await webcam.play();
 
 	videoHTML.srcObject = webcam.canvas.captureStream();
