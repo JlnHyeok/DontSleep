@@ -1,3 +1,36 @@
+import RunBird from '$components/avatar/RunBird.svelte';
+import RunBrownDog from '$components/avatar/RunBrownDog.svelte';
+import RunCat from '$components/avatar/RunCat.svelte';
+import RunDoraemong from '$components/avatar/RunDoraemong.svelte';
+import RunGirl from '$components/avatar/RunGirl.svelte';
+import RunRabbit from '$components/avatar/RunRabbit.svelte';
+import RunSlime from '$components/avatar/RunSlime.svelte';
+import RunWhiteDog from '$components/avatar/RunWhiteDog.svelte';
+
+export function parseStringToAvatar(name: string): typeof RunGirl {
+	console.log(name);
+	switch (name) {
+		case 'RunGirl':
+			return RunGirl;
+		case 'RunCat':
+			return RunCat;
+		case 'RunRabbit':
+			return RunRabbit;
+		case 'RunSlime':
+			return RunSlime;
+		case 'RunDoraemong':
+			return RunDoraemong;
+		case 'RunBrownDog':
+			return RunBrownDog;
+		case 'RunWhiteDog':
+			return RunWhiteDog;
+		case 'RunBird':
+			return RunBird;
+		default:
+			return RunSlime;
+	}
+}
+
 export function msToHMS(ms: number) {
 	// 1- Convert to seconds:
 	let seconds: number | string = ms / 1000;

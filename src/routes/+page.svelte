@@ -18,10 +18,14 @@
 
 	let videoHTML: HTMLVideoElement;
 	let webcamHTML: HTMLDivElement;
-	let hour: number = 1;
-	let min: number = 0;
-	let sec: number = 0;
+	let hour: string = '1';
+	let min: string = '0';
+	let sec: string = '0';
 	let showAlarmStopModal: boolean = false;
+
+	$: hour = hour.replace(/[^0-9]/g, '');
+	$: min = min.replace(/[^0-9]/g, '');
+	$: sec = sec.replace(/[^0-9]/g, '');
 
 	$timerForStudy = new Timer({
 		tick: 1,
@@ -33,6 +37,7 @@
 		},
 		onstop: function () {
 			$progressTime = '0h 00m 00s';
+			stopTimer();
 		}
 	});
 
@@ -55,14 +60,13 @@
 			if (status == 'sleep' && showAlarmStopModal == false) {
 				showAlarmStopModal = true;
 				beep(status);
-				window.navigator.vibrate(10000);
 			}
 		};
 	};
 
 	function startTimer() {
 		if ($isPlay == 'stop') {
-			$studyTargetTime = hour * 3600 + min * 60 + sec;
+			$studyTargetTime = Number(hour) * 3600 + Number(min) * 60 + Number(sec);
 			if ($studyTargetTime < 10 || $studyTargetTime > 3 * 60 * 60) return;
 			$timerForStudy.start($studyTargetTime);
 		} else if ($isPlay == 'pause') {
@@ -80,6 +84,7 @@
 		stop();
 		$timerForStudy.stop();
 	}
+
 	//#endregion
 </script>
 
@@ -135,7 +140,8 @@
 				>
 					<input
 						disabled={$isPlay == 'play' || $isPlay == 'pause'}
-						type="number"
+						type="text"
+						maxlength="2"
 						name="hour"
 						id="hour"
 						class="w-10 h-8 text-center outline-none bg-inherit text-lg font-bold text-gray-600"
@@ -150,7 +156,8 @@
 				>
 					<input
 						disabled={$isPlay == 'play' || $isPlay == 'pause'}
-						type="number"
+						type="text"
+						maxlength="2"
 						name="min"
 						id="min"
 						class="w-10 h-8 text-center rounded-md outline-none bg-inherit text-lg font-bold text-gray-600"
@@ -165,7 +172,8 @@
 				>
 					<input
 						disabled={$isPlay == 'play' || $isPlay == 'pause'}
-						type="number"
+						type="text"
+						maxlength="2"
 						name="sec"
 						id="sec"
 						class="w-10 h-8 text-center rounded-md outline-none bg-inherit text-lg font-bold text-gray-600"

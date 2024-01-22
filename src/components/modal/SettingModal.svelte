@@ -9,6 +9,7 @@
 	import RunBrownDog from '$components/avatar/RunBrownDog.svelte';
 	import RunBird from '$components/avatar/RunBird.svelte';
 	import RunDoraemong from '$components/avatar/RunDoraemong.svelte';
+	import { parseStringToAvatar } from '$lib/helper';
 	export let showModal: boolean; // boolean
 
 	let dialog: HTMLDialogElement; // HTMLDialogElement
@@ -48,6 +49,11 @@
 		localStorage.setItem('backgroundColor', color);
 	}
 
+	function onClickAvatarButton(avatar: string) {
+		$runAvartar = avatar;
+		localStorage.setItem('runAvartar', avatar);
+	}
+
 	$: if (dialog && showModal) dialog.showModal();
 </script>
 
@@ -84,13 +90,16 @@
 					<div class="h-1/3 flex justify-center items-center bg-gray-200">
 						<span class="font-semibold">진행 아이콘</span>
 						<div class="w-10 rounded-md absolute xs:right-[30%] right-[23%]">
-							<svelte:component this={$runAvartar.component} />
+							<svelte:component this={parseStringToAvatar($runAvartar)} />
 						</div>
 					</div>
 					<div class="bg-gray-200 h-2/3 grid grid-cols-5 gap-4 pt-3 px-2 pb-2">
 						{#each avatarList as avatar}
 							<!-- content here -->
-							<div class="pl-[50%] scale-[0.88] xs:pt-[5%] pt-[10%] border-[1px]">
+							<div
+								on:click={() => onClickAvatarButton(avatar.name)}
+								class="pl-[50%] scale-[0.88] xs:pt-[5%] pt-[10%] border-[1px] cursor-pointer"
+							>
 								<svelte:component this={avatar.component} />
 							</div>
 						{/each}
